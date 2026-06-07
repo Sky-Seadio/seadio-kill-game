@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>狼人 — Seadio Kill</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+
+  .card {
+    width: 300px;
+    height: 420px;
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(233, 69, 96, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .card:hover {
+    transform: scale(1.05) translateY(-5px);
+  }
+
+  /* 背景 */
+  .card-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #1a0a0a 0%, #2a0e0e 50%, #0d0606 100%);
+  }
+
+  /* 月光效果 */
+  .moon {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    top: 30px;
+    right: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%,
+      rgba(255,255,255,0.9) 0%,
+      rgba(220,230,250,0.6) 40%,
+      rgba(180,200,230,0.2) 70%,
+      transparent 100%);
+    box-shadow: 0 0 60px 20px rgba(180,200,240,0.15);
+  }
+
+  /* 角色图标 */
+  .character-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    z-index: 2;
+    filter: drop-shadow(0 0 30px rgba(233, 69, 96, 0.5));
+  }
+
+  /* 卡牌边框 */
+  .card-border {
+    position: absolute;
+    inset: 8px;
+    border: 2px solid rgba(233, 69, 96, 0.3);
+    border-radius: 12px;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* 法力值 */
+  .mana {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 45px;
+    height: 45px;
+    background: radial-gradient(circle at 40% 35%, #4a9eff 0%, #2070dd 50%, #0a2060 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 4;
+    border: 2px solid rgba(100,180,255,0.4);
+  }
+
+  /* 名字 */
+  .name {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(30,15,15,0.95) 0%, rgba(20,10,10,0.98) 100%);
+    padding: 10px 25px;
+    border-radius: 8px;
+    border: 1px solid rgba(233, 69, 96, 0.3);
+    z-index: 4;
+    text-align: center;
+    min-width: 180px;
+  }
+  .name h2 {
+    font-size: 22px;
+    font-weight: 900;
+    color: #e94560;
+    text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+    margin-bottom: 4px;
+  }
+  .name .subtitle {
+    font-size: 12px;
+    color: #aaa;
+    letter-spacing: 2px;
+  }
+
+  /* 类型 */
+  .type {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: rgba(200,170,120,0.7);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    z-index: 4;
+  }
+
+  /* 攻击力 */
+  .attack {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #cc3300 0%, #881100 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 4;
+    border: 2px solid rgba(200,50,0,0.4);
+  }
+
+  /* 生命值 */
+  .health {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #22aa22 0%, #116611 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 4;
+    border: 2px solid rgba(30,170,30,0.4);
+  }
+
+  /* 技能描述 */
+  .skill {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid rgba(233, 69, 96, 0.2);
+    z-index: 4;
+    text-align: center;
+    max-width: 250px;
+  }
+  .skill p {
+    font-size: 11px;
+    color: #ddd;
+    line-height: 1.5;
+  }
+  .skill .keyword {
+    color: #e94560;
+    font-weight: 700;
+  }
+
+  /* 发光效果 */
+  .glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(233, 69, 96, 0.15) 0%, transparent 70%);
+    z-index: 1;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- 背景 -->
+  <div class="card-bg"></div>
+
+  <!-- 月光 -->
+  <div class="moon"></div>
+
+  <!-- 发光效果 -->
+  <div class="glow"></div>
+
+  <!-- 角色图标 -->
+  <div class="character-icon">🐺</div>
+
+  <!-- 卡牌边框 -->
+  <div class="card-border"></div>
+
+  <!-- 法力值 -->
+  <div class="mana">3</div>
+
+  <!-- 名字 -->
+  <div class="name">
+    <h2>狼人</h2>
+    <div class="subtitle">WEREWOLF</div>
+  </div>
+
+  <!-- 类型 -->
+  <div class="type">角色牌</div>
+
+  <!-- 技能描述 -->
+  <div class="skill">
+    <p><span class="keyword">【狂暴】</span> 攻击时有50%几率造成双倍伤害</p>
+  </div>
+
+  <!-- 攻击力 -->
+  <div class="attack">1</div>
+
+  <!-- 生命值 -->
+  <div class="health">3</div>
+</div>
+
+</body>
+</html>
