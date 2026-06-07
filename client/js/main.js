@@ -138,17 +138,8 @@
     gameState.isMyTurn = true;
     ui.hideAllSections();
 
-    // 确定可用行动
-    const actions = [];
-    if (gameState.myField && gameState.myField.currentHp > 0) {
-      actions.push('attack');
-    }
-    if (gameState.hasSkillCards()) {
-      actions.push('skill');
-    }
-    if (gameState.getCharacterCards().length > 0) {
-      actions.push('swap');
-    }
+    // 使用服务器提供的可用行动列表
+    const actions = data.actions || ['attack', 'skill', 'swap'];
 
     ui.showActions(true, actions);
     ui.addLog(data.message || '你的回合！选择行动。', true);
