@@ -224,6 +224,17 @@ class UIRenderer {
     this.elements.gameoverReason.textContent = reasonTexts[reason] || reason;
   }
 
+  // === 牌库说明面板 ===
+  setupDeckPanel() {
+    const toggleBtn = document.getElementById('btn-toggle-deck');
+    const content = document.getElementById('deck-content');
+
+    toggleBtn.addEventListener('click', () => {
+      content.classList.toggle('hidden');
+      toggleBtn.textContent = content.classList.contains('hidden') ? '📚 牌库说明' : '✕ 关闭说明';
+    });
+  }
+
   // === 隐藏所有交互区域 ===
   hideAllSections() {
     this.showRPS(false);

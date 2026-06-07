@@ -90,6 +90,108 @@
         <!-- 卡牌将由 JS 渲染 -->
       </div>
     </div>
+
+    <!-- 牌库说明面板 -->
+    <div id="deck-panel" class="deck-panel">
+      <button id="btn-toggle-deck" class="btn-toggle-deck">📚 牌库说明</button>
+      <div id="deck-content" class="deck-content hidden">
+        <h3 class="deck-title">牌库构成 (16张)</h3>
+        <div class="deck-stats">
+          <div class="deck-stat">
+            <span class="stat-icon">👨‍🌾</span>
+            <span class="stat-name">村民</span>
+            <span class="stat-count">×4</span>
+            <span class="stat-info">2HP / 1ATK</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🐺</span>
+            <span class="stat-name">狼人</span>
+            <span class="stat-count">×4</span>
+            <span class="stat-info">3HP / 1ATK</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🏹</span>
+            <span class="stat-name">猎人</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">3HP / 1.5ATK / 殉职</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🛡️</span>
+            <span class="stat-name">守卫</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">2HP / 1ATK / 双用</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🧙‍♀️</span>
+            <span class="stat-name">女巫</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">2HP / 1ATK / 双用</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🔮</span>
+            <span class="stat-name">预言家</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">纯技能牌</span>
+          </div>
+        </div>
+
+        <h3 class="deck-title">技能说明</h3>
+        <div class="skill-list">
+          <div class="skill-item">
+            <span class="skill-name">【殉职】</span>
+            <span class="skill-desc">猎人死亡时，对对方场上角色造成10点伤害</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【复活】</span>
+            <span class="skill-desc">女巫死亡时，可满血复活一次</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【毒药】</span>
+            <span class="skill-desc">女巫在场时，直接击杀对方场上一个角色（无视守卫盾）</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【守护之盾】</span>
+            <span class="skill-desc">守卫技能牌，免疫一次伤害</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【天眼】</span>
+            <span class="skill-desc">预言家技能牌，查看对方所有手牌，指定其下一张出的角色</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【复活药水】</span>
+            <span class="skill-desc">女巫技能牌，复活一张已失去的角色牌</span>
+          </div>
+        </div>
+
+        <h3 class="deck-title">克制关系</h3>
+        <div class="counter-list">
+          <div class="counter-item">
+            <span class="counter-from">🏹 猎人</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🐺 狼人</span>
+            <span class="counter-reason">1.5ATK + 殉职10伤害</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-from">🧙‍♀️ 女巫</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🛡️ 守卫</span>
+            <span class="counter-reason">毒药无视盾</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-from">🛡️ 守卫</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🏹 猎人</span>
+            <span class="counter-reason">盾可挡殉职伤害</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-from">🔮 预言家</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🧙‍♀️ 女巫</span>
+            <span class="counter-reason">躲避可躲毒药</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 游戏结束界面 -->

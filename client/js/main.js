@@ -5,6 +5,9 @@
   // 连接 socket
   socketManager.connect();
 
+  // 设置牌库说明面板
+  ui.setupDeckPanel();
+
   // === 大厅 ===
   ui.elements.joinBtn.addEventListener('click', () => {
     socketManager.joinQueue();

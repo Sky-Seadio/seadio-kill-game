@@ -428,6 +428,139 @@ body {
   font-size: 1.1rem;
 }
 
+/* === 牌库说明面板 === */
+.deck-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+  max-width: 300px;
+}
+
+.btn-toggle-deck {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: #eee;
+  border: 1px solid #555;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-toggle-deck:hover {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: #e94560;
+}
+
+.deck-content {
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 8px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.deck-title {
+  font-size: 1rem;
+  color: #e94560;
+  margin: 15px 0 10px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #333;
+}
+
+.deck-title:first-child {
+  margin-top: 0;
+}
+
+.deck-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.deck-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.stat-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.stat-name {
+  font-weight: bold;
+  min-width: 50px;
+}
+
+.stat-count {
+  color: #aaa;
+  min-width: 20px;
+}
+
+.stat-info {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-item {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.skill-name {
+  color: #a78bfa;
+  font-weight: bold;
+}
+
+.skill-desc {
+  color: #ccc;
+}
+
+.counter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.counter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.counter-from {
+  font-weight: bold;
+  min-width: 70px;
+}
+
+.counter-arrow {
+  color: #e94560;
+}
+
+.counter-to {
+  font-weight: bold;
+  min-width: 70px;
+}
+
+.counter-reason {
+  color: #888;
+  font-size: 0.8rem;
+}
+
 /* === 滚动条 === */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
