@@ -161,6 +161,11 @@ io.on('connection', (socket) => {
       return;
     }
 
+    if (room.currentRound.rpsWinner !== socket.id) {
+      socket.emit('error_msg', { message: '不是你的回合' });
+      return;
+    }
+
     const player = room.getPlayer(socket.id);
     const opponent = room.getOpponent(socket.id);
 
@@ -265,7 +270,10 @@ io.on('connection', (socket) => {
   // === 复活目标选择 ===
   socket.on('select_revive_target', ({ cardId, targetCardId }) => {
     const room = matchmaker.getRoom(socket.id);
-    if (!room) return;
+    if (!room || room.phase !== 'action') {
+      socket.emit('error_msg', { message: '现在不能选择目标' });
+      return;
+    }
 
     const player = room.getPlayer(socket.id);
 
