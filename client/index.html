@@ -7,9 +7,105 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>Seadio Kill</h1>
-  <p>游戏加载中...</p>
+  <!-- 大厅界面 -->
+  <div id="screen-lobby" class="screen active">
+    <div class="lobby-container">
+      <h1 class="game-title">Seadio Kill</h1>
+      <p class="subtitle">狼人杀卡牌对战</p>
+      <button id="btn-join-queue" class="btn btn-primary">开始匹配</button>
+      <p id="queue-status" class="status-text hidden">正在匹配对手...</p>
+    </div>
+  </div>
+
+  <!-- 游戏界面 -->
+  <div id="screen-game" class="screen hidden">
+    <!-- 对手区域 -->
+    <div class="opponent-area">
+      <div class="player-info opponent-info">
+        <span class="player-label">对手</span>
+        <span class="hand-count">手牌: <span id="opponent-hand-count">6</span></span>
+      </div>
+      <div class="field opponent-field">
+        <div id="opponent-field-card" class="field-card empty">
+          <span class="card-placeholder">?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 战斗区域 -->
+    <div class="battle-area">
+      <div id="battle-log" class="battle-log">
+        <p class="log-entry">游戏开始！</p>
+      </div>
+
+      <!-- 石头剪刀布区域 -->
+      <div id="rps-section" class="rps-section hidden">
+        <p class="rps-prompt">石头剪刀布！</p>
+        <div class="rps-buttons">
+          <button class="rps-btn" data-choice="rock">✊</button>
+          <button class="rps-btn" data-choice="scissors">✌️</button>
+          <button class="rps-btn" data-choice="paper">🖐️</button>
+        </div>
+      </div>
+
+      <!-- 行动选择区域 -->
+      <div id="action-section" class="action-section hidden">
+        <p class="action-prompt">选择行动：</p>
+        <div class="action-buttons">
+          <button class="action-btn" data-action="attack">⚔️ 攻击</button>
+          <button class="action-btn" data-action="skill">🃏 出技能牌</button>
+          <button class="action-btn" data-action="swap">🔄 换角色</button>
+        </div>
+      </div>
+
+      <!-- 毒药目标选择 -->
+      <div id="poison-section" class="target-section hidden">
+        <p class="target-prompt">选择毒药目标：</p>
+        <div id="poison-targets" class="target-buttons"></div>
+      </div>
+
+      <!-- 复活目标选择 -->
+      <div id="revive-section" class="target-section hidden">
+        <p class="target-prompt">选择复活目标：</p>
+        <div id="revive-targets" class="target-buttons"></div>
+      </div>
+    </div>
+
+    <!-- 玩家区域 -->
+    <div class="player-area">
+      <div class="field player-field">
+        <div id="player-field-card" class="field-card empty">
+          <span class="card-placeholder">选择角色牌部署</span>
+        </div>
+      </div>
+      <div class="player-info">
+        <span class="player-label">你</span>
+        <div class="field-char-stats" id="player-field-stats"></div>
+      </div>
+    </div>
+
+    <!-- 手牌区域 -->
+    <div class="hand-area">
+      <div id="hand-cards" class="hand-cards">
+        <!-- 卡牌将由 JS 渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 游戏结束界面 -->
+  <div id="screen-gameover" class="screen hidden">
+    <div class="gameover-container">
+      <h2 id="gameover-title" class="gameover-title">游戏结束</h2>
+      <p id="gameover-reason" class="gameover-reason"></p>
+      <button id="btn-play-again" class="btn btn-primary">再来一局</button>
+    </div>
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
