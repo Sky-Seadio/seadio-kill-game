@@ -172,6 +172,11 @@
         ui.addLog('你发动了攻击！');
         ui.showActions(false);
 
+      } else if (action === 'witch_poison') {
+        socketManager.performAction('witch_poison');
+        ui.addLog('你使用了女巫毒药！');
+        ui.showActions(false);
+
       } else if (action === 'skill') {
         // 显示技能牌供选择
         const skillCards = gameState.myHand.filter(c => c.skillCard);
@@ -268,6 +273,10 @@
       } else if (data.result.type === 'revive') {
         ui.addLog(`${data.result.card.name} 已复活！`);
       }
+    } else if (data.type === 'witch_poison') {
+      ui.addLog(data.result.message || '毒药发动！', true);
+      updateFieldDisplays();
+
     } else if (data.type === 'swap') {
       ui.addLog(`${data.playerId === socketManager.socket.id ? '你' : '对手'} 换上了 ${data.newCharacter.name}！`);
 

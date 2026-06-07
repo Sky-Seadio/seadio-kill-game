@@ -144,9 +144,29 @@ io.on('connection', (socket) => {
     });
 
     room.phase = 'action';
+    // 动态生成可用行动列表
+    const winnerPlayer = room.getPlayer(result.winner);
+    const winnerActions = [];
+    if (winnerPlayer.field && winnerPlayer.field.currentHp > 0) {
+      winnerActions.push('attack');
+      // 女巫在场且对手有角色时可使用毒药
+      if (winnerPlayer.field.type === 'witch') {
+        const opp = room.getOpponent(result.winner);
+        if (opp.field && opp.field.currentHp > 0) {
+          winnerActions.push('witch_poison');
+        }
+      }
+    }
+    if (winnerPlayer.hand.some(c => c.skillCard)) {
+      winnerActions.push('skill');
+    }
+    if (winnerPlayer.hand.some(c => c.category === 'character' || c.category === 'dual')) {
+      winnerActions.push('swap');
+    }
+
     emitToPlayer(result.winner, 'your_turn', {
-      actions: ['attack', 'skill', 'swap'],
-      message: '你的回合！选择行动：攻击 / 出技能牌 / 换角色',
+      actions: winnerActions,
+      message: '你的回合！选择行动。',
     });
     emitToPlayer(room.getOpponentId(result.winner), 'opponent_turn', {
       message: '对方回合中...',
@@ -233,6 +253,39 @@ io.on('connection', (socket) => {
       } else {
         socket.emit('error_msg', { message: '此卡牌不能作为技能使用' });
         return;
+      }
+
+      endRound(room);
+
+    } else if (type === 'witch_poison') {
+      // 女巫毒药 - 直接击杀对方场上角色
+      if (!player.field || player.field.type !== 'witch' || player.field.currentHp <= 0) {
+        socket.emit('error_msg', { message: '女巫不在场上，无法使用毒药' });
+        return;
+      }
+      if (!opponent.field || opponent.field.currentHp <= 0) {
+        socket.emit('error_msg', { message: '对手场上没有角色' });
+        return;
+      }
+
+      const poisonResult = logic.processWitchPoison(opponent.field, opponent);
+
+      if (poisonResult.success) {
+        emitToRoom(room, 'action_result', {
+          type: 'witch_poison',
+          playerId: socket.id,
+          result: poisonResult,
+        });
+
+        // 处理毒药致死
+        handleCharacterDeath(room, room.getOpponentId(socket.id), opponent);
+      } else {
+        // 躲避成功
+        emitToRoom(room, 'action_result', {
+          type: 'witch_poison',
+          playerId: socket.id,
+          result: poisonResult,
+        });
       }
 
       endRound(room);

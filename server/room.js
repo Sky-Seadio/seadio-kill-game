@@ -61,13 +61,27 @@ class GameRoom {
 
     const card = player.hand[cardIndex];
 
-    // 如果玩家场上已有存活角色，且这是角色牌，则为换角色（仅在赢得 RPS 时）
-    if (player.field && card.category === 'character') {
+    // 如果玩家场上已有存活角色，且这是纯角色牌，则不允许部署（需用换角色操作）
+    if (player.field && player.field.currentHp > 0 && card.category === 'character') {
       return { success: false, error: '场上角色仍存活，请使用换角色操作' };
+    }
+
+    // 如果场上没有角色，且部署的是纯技能牌，不允许（必须先部署角色）
+    if ((!player.field || player.field.currentHp <= 0) && card.category === 'skill') {
+      return { success: false, error: '场上没有角色，请先部署一张角色牌' };
     }
 
     player.hand.splice(cardIndex, 1);
     this.currentRound.deployments[playerId] = card;
+
+    // 如果是角色/双用牌且场上没有角色，直接上场
+    if (!player.field || player.field.currentHp <= 0) {
+      if (card.category === 'character' || card.category === 'dual') {
+        const { createFieldCharacter, processSeerDeploy } = require('./logic');
+        player.field = createFieldCharacter(card);
+        processSeerDeploy(player.field, player);
+      }
+    }
 
     return { success: true, card };
   }
