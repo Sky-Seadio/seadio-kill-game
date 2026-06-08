@@ -58,7 +58,7 @@ class UIRenderer {
       el.className = `hand-card ${card.category}`;
       el.dataset.cardId = card.id;
 
-      const stats = CHARACTER_STATS[card.type];
+      const stats = CHARACTER_STATS[card.type] || { name: card.name, hp: card.hp, atk: card.atk };
       const isDual = card.category === 'dual';
       const isSkill = card.category === 'skill';
 
