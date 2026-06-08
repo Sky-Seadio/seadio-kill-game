@@ -3,7 +3,16 @@
  */
 class UIRenderer {
   constructor() {
-    // 缓存 DOM 元素
+    this.elements = {};
+    this.initialized = false;
+  }
+
+  /**
+   * 延迟初始化 DOM 元素（确保 DOM 已加载）
+   */
+  init() {
+    if (this.initialized) return;
+
     this.screens = {
       lobby: document.getElementById('screen-lobby'),
       game: document.getElementById('screen-game'),
@@ -29,10 +38,21 @@ class UIRenderer {
       gameoverReason: document.getElementById('gameover-reason'),
       playAgainBtn: document.getElementById('btn-play-again'),
     };
+
+    this.initialized = true;
+  }
+
+  /**
+   * 获取 DOM 元素（延迟加载）
+   */
+  getElement(key) {
+    if (!this.initialized) this.init();
+    return this.elements[key];
   }
 
   // === 界面管理 ===
   showScreen(name) {
+    if (!this.initialized) this.init();
     Object.values(this.screens).forEach(s => {
       s.classList.remove('active');
       s.classList.add('hidden');
@@ -45,13 +65,17 @@ class UIRenderer {
 
   // === 大厅 ===
   showQueueStatus(show) {
-    this.elements.queueStatus.classList.toggle('hidden', !show);
-    this.elements.joinBtn.classList.toggle('hidden', show);
+    const queueStatus = this.getElement('queueStatus');
+    const joinBtn = this.getElement('joinBtn');
+    if (queueStatus) queueStatus.classList.toggle('hidden', !show);
+    if (joinBtn) joinBtn.classList.toggle('hidden', show);
   }
 
   // === 手牌 ===
   renderHand(cards, onCardClick) {
-    this.elements.handCards.innerHTML = '';
+    const handCards = this.getElement('handCards');
+    if (!handCards) return;
+    handCards.innerHTML = '';
 
     cards.forEach(card => {
       const el = document.createElement('div');
@@ -76,7 +100,7 @@ class UIRenderer {
       `;
 
       el.addEventListener('click', () => onCardClick(card));
-      this.elements.handCards.appendChild(el);
+      handCards.appendChild(el);
     });
   }
 
@@ -94,7 +118,7 @@ class UIRenderer {
 
   // === 场上卡牌 ===
   renderFieldCard(elementKey, character, faceDown = false) {
-    const el = this.elements[elementKey];
+    const el = this.getElement(elementKey);
     if (!el) {
       console.error(`Element not found: ${elementKey}`);
       return;
@@ -122,13 +146,16 @@ class UIRenderer {
   renderMyField(character) {
     this.renderFieldCard('playerFieldCard', character);
     // 同时更新下方统计
-    if (character) {
-      this.elements.playerFieldStats.innerHTML = `
-        <span style="color:#e94560">♥${character.currentHp}/${character.maxHp}</span>
-        <span style="color:#f5a623">⚔${character.atk}</span>
-      `;
-    } else {
-      this.elements.playerFieldStats.innerHTML = '';
+    const playerFieldStats = this.getElement('playerFieldStats');
+    if (playerFieldStats) {
+      if (character) {
+        playerFieldStats.innerHTML = `
+          <span style="color:#e94560">♥${character.currentHp}/${character.maxHp}</span>
+          <span style="color:#f5a623">⚔${character.atk}</span>
+        `;
+      } else {
+        playerFieldStats.innerHTML = '';
+      }
     }
   }
 
@@ -137,25 +164,30 @@ class UIRenderer {
   }
 
   updateOpponentHandCount(count) {
-    this.elements.opponentHandCount.textContent = count;
+    const opponentHandCount = this.getElement('opponentHandCount');
+    if (opponentHandCount) opponentHandCount.textContent = count;
   }
 
   // === 战斗日志 ===
   addLog(message, important = false) {
+    const battleLog = this.getElement('battleLog');
+    if (!battleLog) return;
     const entry = document.createElement('p');
     entry.className = `log-entry${important ? ' important' : ''}`;
     entry.textContent = message;
-    this.elements.battleLog.appendChild(entry);
-    this.elements.battleLog.scrollTop = this.elements.battleLog.scrollHeight;
+    battleLog.appendChild(entry);
+    battleLog.scrollTop = battleLog.scrollHeight;
   }
 
   clearLog() {
-    this.elements.battleLog.innerHTML = '';
+    const battleLog = this.getElement('battleLog');
+    if (battleLog) battleLog.innerHTML = '';
   }
 
   // === 石头剪刀布 ===
   showRPS(show) {
-    this.elements.rpsSection.classList.toggle('hidden', !show);
+    const rpsSection = this.getElement('rpsSection');
+    if (rpsSection) rpsSection.classList.toggle('hidden', !show);
   }
 
   highlightRPS(choice) {
@@ -172,7 +204,8 @@ class UIRenderer {
 
   // === 行动选择 ===
   showActions(show, availableActions = []) {
-    this.elements.actionSection.classList.toggle('hidden', !show);
+    const actionSection = this.getElement('actionSection');
+    if (actionSection) actionSection.classList.toggle('hidden', !show);
     if (show) {
       document.querySelectorAll('.action-btn').forEach(btn => {
         const action = btn.dataset.action;
@@ -184,48 +217,61 @@ class UIRenderer {
 
   // === 目标选择 ===
   showPoisonTarget(targets, onSelect) {
-    this.elements.poisonSection.classList.remove('hidden');
-    this.elements.poisonTargets.innerHTML = '';
-    targets.forEach(t => {
-      const btn = document.createElement('button');
-      btn.className = 'target-btn';
-      btn.textContent = `${t.name} (♥${t.hp})`;
-      btn.addEventListener('click', () => onSelect(t));
-      this.elements.poisonTargets.appendChild(btn);
-    });
+    const poisonSection = this.getElement('poisonSection');
+    const poisonTargets = this.getElement('poisonTargets');
+    if (poisonSection) poisonSection.classList.remove('hidden');
+    if (poisonTargets) {
+      poisonTargets.innerHTML = '';
+      targets.forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = 'target-btn';
+        btn.textContent = `${t.name} (♥${t.hp})`;
+        btn.addEventListener('click', () => onSelect(t));
+        poisonTargets.appendChild(btn);
+      });
+    }
   }
 
   hidePoisonTarget() {
-    this.elements.poisonSection.classList.add('hidden');
+    const poisonSection = this.getElement('poisonSection');
+    if (poisonSection) poisonSection.classList.add('hidden');
   }
 
   showReviveTarget(targets, onSelect) {
-    this.elements.reviveSection.classList.remove('hidden');
-    this.elements.reviveTargets.innerHTML = '';
-    targets.forEach(t => {
-      const btn = document.createElement('button');
-      btn.className = 'target-btn';
-      btn.textContent = t.name;
-      btn.addEventListener('click', () => onSelect(t));
-      this.elements.reviveTargets.appendChild(btn);
-    });
+    const reviveSection = this.getElement('reviveSection');
+    const reviveTargets = this.getElement('reviveTargets');
+    if (reviveSection) reviveSection.classList.remove('hidden');
+    if (reviveTargets) {
+      reviveTargets.innerHTML = '';
+      targets.forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = 'target-btn';
+        btn.textContent = t.name;
+        btn.addEventListener('click', () => onSelect(t));
+        reviveTargets.appendChild(btn);
+      });
+    }
   }
 
   hideReviveTarget() {
-    this.elements.reviveSection.classList.add('hidden');
+    const reviveSection = this.getElement('reviveSection');
+    if (reviveSection) reviveSection.classList.add('hidden');
   }
 
   // === 游戏结束 ===
   showGameOver(isWin, reason) {
     this.showScreen('gameover');
-    this.elements.gameoverTitle.textContent = isWin ? '🎉 你赢了！' : '💀 你输了';
-    this.elements.gameoverTitle.className = `gameover-title ${isWin ? 'win' : 'lose'}`;
-
+    const gameoverTitle = this.getElement('gameoverTitle');
+    const gameoverReason = this.getElement('gameoverReason');
+    if (gameoverTitle) {
+      gameoverTitle.textContent = isWin ? '🎉 你赢了！' : '💀 你输了';
+      gameoverTitle.className = `gameover-title ${isWin ? 'win' : 'lose'}`;
+    }
     const reasonTexts = {
       all_characters_lost: '对方所有角色牌已被消耗',
       opponent_disconnected: '对手断开连接',
     };
-    this.elements.gameoverReason.textContent = reasonTexts[reason] || reason;
+    if (gameoverReason) gameoverReason.textContent = reasonTexts[reason] || reason;
   }
 
   // === 牌库说明面板 ===
@@ -233,10 +279,12 @@ class UIRenderer {
     const toggleBtn = document.getElementById('btn-toggle-deck');
     const content = document.getElementById('deck-content');
 
-    toggleBtn.addEventListener('click', () => {
-      content.classList.toggle('hidden');
-      toggleBtn.textContent = content.classList.contains('hidden') ? '📚 牌库说明' : '✕ 关闭说明';
-    });
+    if (toggleBtn && content) {
+      toggleBtn.addEventListener('click', () => {
+        content.classList.toggle('hidden');
+        toggleBtn.textContent = content.classList.contains('hidden') ? '📚 牌库说明' : '✕ 关闭说明';
+      });
+    }
   }
 
   // === 隐藏所有交互区域 ===
