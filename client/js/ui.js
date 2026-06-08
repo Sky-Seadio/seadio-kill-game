@@ -93,8 +93,12 @@ class UIRenderer {
   }
 
   // === 场上卡牌 ===
-  renderFieldCard(elementId, character, faceDown = false) {
-    const el = this.elements[elementId];
+  renderFieldCard(elementKey, character, faceDown = false) {
+    const el = this.elements[elementKey];
+    if (!el) {
+      console.error(`Element not found: ${elementKey}`);
+      return;
+    }
     if (!character) {
       el.className = 'field-card empty';
       el.innerHTML = '<span class="card-placeholder">?</span>';
@@ -116,7 +120,7 @@ class UIRenderer {
   }
 
   renderMyField(character) {
-    this.renderFieldCard('player-field-card', character);
+    this.renderFieldCard('playerFieldCard', character);
     // 同时更新下方统计
     if (character) {
       this.elements.playerFieldStats.innerHTML = `
@@ -129,7 +133,7 @@ class UIRenderer {
   }
 
   renderOpponentField(character, faceDown = false) {
-    this.renderFieldCard('opponent-field-card', character, faceDown);
+    this.renderFieldCard('opponentFieldCard', character, faceDown);
   }
 
   updateOpponentHandCount(count) {
