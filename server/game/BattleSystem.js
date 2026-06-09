@@ -58,7 +58,7 @@ class BattleSystem {
     if (!game) return { success: false, error: 'Game not found' };
 
     const hunterPlayer = game.players[hunterPlayerId];
-    if (!hunterPlayer.fieldCard || hunterPlayer.fieldCard.type !== 'hunter') {
+    if (!hunterPlayer.fieldCard || hunterPlayer.fieldCard.id !== 'hunter') {
       return { success: false, error: 'No hunter on field' };
     }
 
@@ -71,7 +71,7 @@ class BattleSystem {
     if (!game) return { success: false, error: 'Game not found' };
 
     const witchPlayer = game.players[witchPlayerId];
-    if (!witchPlayer.fieldCard || witchPlayer.fieldCard.type !== 'witch') {
+    if (!witchPlayer.fieldCard || witchPlayer.fieldCard.id !== 'witch') {
       return { success: false, error: 'No witch on field' };
     }
 
@@ -98,7 +98,7 @@ class BattleSystem {
     if (!game) return { success: false, error: 'Game not found' };
 
     const seerPlayer = game.players[seerPlayerId];
-    const seerCardIndex = seerPlayer.hand.findIndex(c => c.type === 'seer');
+    const seerCardIndex = seerPlayer.hand.findIndex(c => c.id === 'seer');
 
     if (seerCardIndex === -1) {
       return { success: false, error: 'No seer in hand' };
@@ -130,7 +130,7 @@ class BattleSystem {
 
     if (isInstant) {
       // Instant shield from hand
-      const guardCardIndex = guardPlayer.hand.findIndex(c => c.type === 'guard');
+      const guardCardIndex = guardPlayer.hand.findIndex(c => c.id === 'guard');
       if (guardCardIndex === -1) {
         return { success: false, error: 'No guard in hand' };
       }
@@ -138,7 +138,7 @@ class BattleSystem {
       game.deck.discard({ type: 'guard' });
     } else {
       // Shield from field
-      if (!guardPlayer.fieldCard || guardPlayer.fieldCard.type !== 'guard') {
+      if (!guardPlayer.fieldCard || guardPlayer.fieldCard.id !== 'guard') {
         return { success: false, error: 'No guard on field' };
       }
     }
@@ -152,7 +152,7 @@ class BattleSystem {
     if (!game) return { success: false, error: 'Game not found' };
 
     const witchPlayer = game.players[witchPlayerId];
-    if (!witchPlayer.fieldCard || witchPlayer.fieldCard.type !== 'witch') {
+    if (!witchPlayer.fieldCard || witchPlayer.fieldCard.id !== 'witch') {
       return { success: false, error: 'No witch on field' };
     }
 
