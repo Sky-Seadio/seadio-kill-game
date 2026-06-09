@@ -1,0 +1,40 @@
+<h2>操作类型设计</h2>
+<p class="subtitle">猜拳赢家可以执行哪些操作？</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>使用手牌</h3>
+      <p>从手牌中打出一张牌（攻击牌、技能牌等）</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>手牌价值高</li><li>策略组合丰富</li><li>卡牌游戏核心</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>可能卡手</li><li>无牌时无法操作</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>角色普通攻击</h3>
+      <p>使用场上角色的攻击力造成伤害</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>稳定输出</li><li>不会卡手</li><li>简单直接</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>策略单一</li><li>手牌价值低</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>两者皆可</h3>
+      <p>可以选择使用手牌或普通攻击</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>策略选择丰富</li><li>灵活应对</li><li>手牌和角色都有价值</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>决策压力大</li><li>可能分析瘫痪</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

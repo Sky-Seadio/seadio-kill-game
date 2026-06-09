@@ -1,0 +1,40 @@
+<h2>操作权使用方式</h2>
+<p class="subtitle">猜拳胜利后，如何使用操作权？</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>完全控制</h3>
+      <p>赢家可以自由选择攻击、技能、换人等所有操作</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>策略自由度高</li><li>玩家掌控感强</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>可能最优解固化</li><li>新手选择困难</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>有限选择</h3>
+      <p>赢家只能从随机刷新的 2-3 个操作中选择一个</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>增加随机性</li><li>每局体验不同</li><li>决策简单</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>可能运气成分过大</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>顺序执行</h3>
+      <p>赢家按固定顺序执行：先暗置牌，再执行一个主动操作</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>流程清晰</li><li>减少决策压力</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>策略深度有限</li><li>可能单调</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

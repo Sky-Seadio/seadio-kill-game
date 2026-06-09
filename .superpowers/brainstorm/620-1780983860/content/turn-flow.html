@@ -1,0 +1,40 @@
+<h2>回合流程设计</h2>
+<p class="subtitle">游戏回合如何进行？</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>猜拳→操作→结束</h3>
+      <p>每回合猜拳一次，赢家执行一个操作，然后回合结束</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>节奏清晰</li><li>易于理解</li><li>每回合有明确目标</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>可能节奏较慢</li><li>等待时间长</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>猜拳→多次操作→结束</h3>
+      <p>猜拳赢家可以连续执行多个操作，直到主动结束</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>连胜奖励</li><li>操作自由度高</li><li>节奏可快可慢</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>可能一方碾压</li><li>平衡性难控制</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>猜拳→操作→猜拳→...</h3>
+      <p>持续猜拳，每次赢家执行一个操作，直到一方无法继续</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>节奏快</li><li>心理博弈持续</li><li>无等待时间</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>可能疲劳</li><li>随机性大</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
