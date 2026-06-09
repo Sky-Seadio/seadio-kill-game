@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seadio Kill</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 大厅界面 -->
+  <div id="screen-lobby" class="screen active">
+    <div class="lobby-container">
+      <h1 class="game-title">Seadio Kill</h1>
+      <p class="subtitle">狼人杀卡牌对战</p>
+      <button id="btn-join-queue" class="btn btn-primary">开始匹配</button>
+      <p id="queue-status" class="status-text hidden">正在匹配对手...</p>
+    </div>
+  </div>
+
+  <!-- 游戏界面 -->
+  <div id="screen-game" class="screen hidden">
+    <!-- 对手区域 -->
+    <div class="opponent-area">
+      <div class="player-info opponent-info">
+        <span class="player-label">对手</span>
+        <span class="hand-count">手牌: <span id="opponent-hand-count">6</span></span>
+      </div>
+      <div class="field opponent-field">
+        <div id="opponent-field-card" class="field-card empty">
+          <span class="card-placeholder">?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 战斗区域 -->
+    <div class="battle-area">
+      <div id="battle-log" class="battle-log">
+        <p class="log-entry">游戏开始！</p>
+      </div>
+
+      <!-- 石头剪刀布区域 -->
+      <div id="rps-section" class="rps-section hidden">
+        <p class="rps-prompt">石头剪刀布！</p>
+        <div class="rps-buttons">
+          <button class="rps-btn" data-choice="rock">✊</button>
+          <button class="rps-btn" data-choice="scissors">✌️</button>
+          <button class="rps-btn" data-choice="paper">🖐️</button>
+        </div>
+      </div>
+
+      <!-- 行动选择区域 -->
+      <div id="action-section" class="action-section hidden">
+        <p class="action-prompt">选择行动：</p>
+        <div class="action-buttons">
+          <button class="action-btn" data-action="attack">⚔️ 攻击</button>
+          <button class="action-btn" data-action="witch_poison">☠️ 毒药</button>
+          <button class="action-btn" data-action="skill">🃏 出技能牌</button>
+          <button class="action-btn" data-action="swap">🔄 换角色</button>
+        </div>
+      </div>
+
+      <!-- 毒药目标选择 -->
+      <div id="poison-section" class="target-section hidden">
+        <p class="target-prompt">选择毒药目标：</p>
+        <div id="poison-targets" class="target-buttons"></div>
+      </div>
+
+      <!-- 复活目标选择 -->
+      <div id="revive-section" class="target-section hidden">
+        <p class="target-prompt">选择复活目标：</p>
+        <div id="revive-targets" class="target-buttons"></div>
+      </div>
+    </div>
+
+    <!-- 玩家区域 -->
+    <div class="player-area">
+      <div class="field player-field">
+        <div id="player-field-card" class="field-card empty">
+          <span class="card-placeholder">选择角色牌部署</span>
+        </div>
+      </div>
+      <div class="player-info">
+        <span class="player-label">你</span>
+        <div class="field-char-stats" id="player-field-stats"></div>
+      </div>
+    </div>
+
+    <!-- 手牌区域 -->
+    <div class="hand-area">
+      <div id="hand-cards" class="hand-cards">
+        <!-- 卡牌将由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- 牌库说明面板 -->
+    <div id="deck-panel" class="deck-panel">
+      <button id="btn-toggle-deck" class="btn-toggle-deck">📚 牌库说明</button>
+      <div id="deck-content" class="deck-content hidden">
+        <h3 class="deck-title">牌库构成 (16张)</h3>
+        <div class="deck-stats">
+          <div class="deck-stat">
+            <span class="stat-icon">👨‍🌾</span>
+            <span class="stat-name">村民</span>
+            <span class="stat-count">×4</span>
+            <span class="stat-info">2HP / 1ATK</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🐺</span>
+            <span class="stat-name">狼人</span>
+            <span class="stat-count">×4</span>
+            <span class="stat-info">3HP / 1ATK</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🏹</span>
+            <span class="stat-name">猎人</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">3HP / 1.5ATK / 殉职</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🛡️</span>
+            <span class="stat-name">守卫</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">2HP / 1ATK / 双用</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🧙‍♀️</span>
+            <span class="stat-name">女巫</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">2HP / 1ATK / 双用</span>
+          </div>
+          <div class="deck-stat">
+            <span class="stat-icon">🔮</span>
+            <span class="stat-name">预言家</span>
+            <span class="stat-count">×2</span>
+            <span class="stat-info">纯技能牌</span>
+          </div>
+        </div>
+
+        <h3 class="deck-title">技能说明</h3>
+        <div class="skill-list">
+          <div class="skill-item">
+            <span class="skill-name">【殉职】</span>
+            <span class="skill-desc">猎人死亡时，对对方场上角色造成10点伤害</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【复活】</span>
+            <span class="skill-desc">女巫死亡时，可满血复活一次</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【毒药】</span>
+            <span class="skill-desc">女巫在场时，直接击杀对方场上一个角色（无视守卫盾）</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【守护之盾】</span>
+            <span class="skill-desc">守卫技能牌，免疫一次伤害</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【天眼】</span>
+            <span class="skill-desc">预言家技能牌，查看对方所有手牌，指定其下一张出的角色</span>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">【复活药水】</span>
+            <span class="skill-desc">女巫技能牌，复活一张已失去的角色牌</span>
+          </div>
+        </div>
+
+        <h3 class="deck-title">克制关系</h3>
+        <div class="counter-list">
+          <div class="counter-item">
+            <span class="counter-from">🏹 猎人</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🐺 狼人</span>
+            <span class="counter-reason">1.5ATK + 殉职10伤害</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-from">🧙‍♀️ 女巫</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🛡️ 守卫</span>
+            <span class="counter-reason">毒药无视盾</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-from">🛡️ 守卫</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🏹 猎人</span>
+            <span class="counter-reason">盾可挡殉职伤害</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-from">🔮 预言家</span>
+            <span class="counter-arrow">→</span>
+            <span class="counter-to">🧙‍♀️ 女巫</span>
+            <span class="counter-reason">躲避可躲毒药</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 游戏结束界面 -->
+  <div id="screen-gameover" class="screen hidden">
+    <div class="gameover-container">
+      <h2 id="gameover-title" class="gameover-title">游戏结束</h2>
+      <p id="gameover-reason" class="gameover-reason"></p>
+      <button id="btn-play-again" class="btn btn-primary">再来一局</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
