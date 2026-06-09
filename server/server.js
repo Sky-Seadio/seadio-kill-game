@@ -1,8 +1,10 @@
+// server/server.js
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const connectDB = require('./database');
+const SocketHandler = require('./socket/SocketHandler');
 require('dotenv').config();
 
 const app = express();
@@ -19,6 +21,9 @@ app.use(express.static('public'));
 
 // Connect to database
 connectDB();
+
+// Setup socket handlers
+const socketHandler = new SocketHandler(io);
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/../public/index.html');
