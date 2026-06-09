@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
+const connectDB = require('./database');
 require('dotenv').config();
 
 const app = express();
@@ -15,6 +16,9 @@ const io = socketIo(server, {
 
 app.use(cors());
 app.use(express.static('public'));
+
+// Connect to database
+connectDB();
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/../public/index.html');
