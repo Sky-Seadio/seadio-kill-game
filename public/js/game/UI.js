@@ -98,6 +98,7 @@ class UI {
     // Card click
     this.renderer.onCardClick = (index) => {
       if (this.game.state.phase !== 'place_card') return;
+      if (this.game.state.fieldCard) return; // Already have a card on field
 
       const card = this.game.state.hand[index];
       if (!card || card.category === 'pure_skill') return;
@@ -183,13 +184,16 @@ class UI {
     // New round
     this.socket.on('new-round', (data) => {
       this.game.setRound(data.round);
-      this.game.setPhase('place_card');
+      // Don't clear field cards - they stay until killed
       this.renderer.render();
     });
 
     // Phase change
     this.socket.on('phase-change', (data) => {
       this.game.setPhase(data.phase);
+      if (data.phase === 'place_card' && this.game.state.fieldCard) {
+        this.renderer.showNotification('等待对手出牌...');
+      }
       this.renderer.render();
     });
 

@@ -124,15 +124,44 @@ class SocketHandler {
     if (!game) return;
 
     game.round++;
-    game.turnPhase = 'place_card';
-
     this.io.to(roomId).emit('new-round', { round: game.round });
-    this.io.to(roomId).emit('phase-change', { phase: 'place_card' });
+
+    // Check if both players have field cards
+    const players = Object.values(game.players);
+    const bothHaveCards = players.every(p => p.fieldCard !== null);
+
+    if (bothHaveCards) {
+      // Both have cards, skip place_card phase, go directly to RPS
+      game.turnPhase = 'rps';
+      this.io.to(roomId).emit('phase-change', { phase: 'rps' });
+
+      // Send opponent's card info
+      players.forEach(player => {
+        const opponentId = Object.keys(game.players).find(id => id !== player.id);
+        this.io.to(player.id).emit('opponent-card', {
+          card: game.players[opponentId].fieldCard
+        });
+      });
+    } else {
+      // At least one player needs to place a card
+      game.turnPhase = 'place_card';
+      this.io.to(roomId).emit('phase-change', { phase: 'place_card' });
+    }
   }
 
   handlePlaceCard(socket, data) {
     const roomId = this.playerRooms.get(socket.id);
     if (!roomId) return;
+
+    const game = this.gameManager.getGame(roomId);
+    if (!game) return;
+
+    // If player already has a card on field, don't allow placing another
+    const player = game.players[socket.id];
+    if (player && player.fieldCard) {
+      socket.emit('error', { message: '场上已有角色牌' });
+      return;
+    }
 
     const result = this.gameManager.placeCard(roomId, socket.id, data.cardInstanceId);
 

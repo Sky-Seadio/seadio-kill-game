@@ -48,12 +48,7 @@ class GameClient {
     this.state.phase = phase;
     this.state.rpsChoice = null;
     this.state.opponentCardRevealed = false;
-
-    // Clear field cards at start of new round (place_card phase)
-    if (phase === 'place_card') {
-      this.state.fieldCard = null;
-      this.state.opponentFieldCard = null;
-    }
+    // Don't clear field cards here - they stay until killed
   }
 
   setRound(round) {
