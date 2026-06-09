@@ -81,6 +81,9 @@ class BattleSystem {
       return { success: false, error: 'Target has no field card' };
     }
 
+    // Mark that witch has used poison (so she can't use revive later)
+    witchPlayer.fieldCard.usedPoison = true;
+
     targetPlayer.fieldCard.health -= 10;
 
     if (targetPlayer.fieldCard.health <= 0) {
@@ -154,6 +157,11 @@ class BattleSystem {
     const witchPlayer = game.players[witchPlayerId];
     if (!witchPlayer.fieldCard || witchPlayer.fieldCard.id !== 'witch') {
       return { success: false, error: 'No witch on field' };
+    }
+
+    // Check if witch has already used poison (can't use both)
+    if (witchPlayer.fieldCard.usedPoison) {
+      return { success: false, error: 'Witch already used poison, cannot use revive' };
     }
 
     witchPlayer.fieldCard.health = 2; // Full health for witch

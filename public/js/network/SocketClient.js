@@ -95,7 +95,7 @@ class SocketClient {
     this.socket.emit('attack');
   }
 
-  useSkill(skill, data) {
-    this.socket.emit('use-skill', { skill, ...data });
+  useSkill(skill, targetId, extraData = {}) {
+    this.socket.emit('use-skill', { skill, targetId, ...extraData });
   }
 }

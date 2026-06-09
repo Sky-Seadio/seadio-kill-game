@@ -124,10 +124,10 @@ class UI {
       this.socket.attack();
     });
 
-    // Use card button (for future skill usage)
+    // Use card button - show skill selection
     document.getElementById('btn-use-card').addEventListener('click', () => {
       if (!this.game.isMyTurn()) return;
-      this.renderer.showNotification('技能系统开发中...');
+      this.showSkillSelection();
     });
   }
 
@@ -260,7 +260,25 @@ class UI {
 
     // Skill used
     this.socket.on('skill-used', (data) => {
-      this.renderer.showNotification(`技能使用: ${data.skill}`);
+      const skillNames = {
+        'guard_shield': '守卫套盾',
+        'witch_poison': '女巫毒药',
+        'witch_revive': '女巫解药',
+        'seer_vision': '预言家天眼',
+        'hunter_shot': '猎人猎枪'
+      };
+      this.renderer.showNotification(`技能使用: ${skillNames[data.skill] || data.skill}`);
+      // If witch poison killed opponent's card, clear it
+      if (data.skill === 'witch_poison' && data.result && data.result.cardDied) {
+        this.game.state.opponentFieldCard = null;
+      }
+      // If witch revive was used, restore field card health
+      if (data.skill === 'witch_revive' && data.result && data.result.success) {
+        if (this.game.state.fieldCard && this.game.state.fieldCard.id === 'witch') {
+          this.game.state.fieldCard.health = 2;
+        }
+      }
+      this.renderer.render();
     });
 
     // Game over
@@ -268,10 +286,128 @@ class UI {
       this.renderer.showGameOver(data);
     });
 
+    // Hunter skill available
+    this.socket.on('hunter-skill-available', (data) => {
+      if (confirm('是否使用猎人技能？（对对手造成10点伤害）')) {
+        this.socket.useSkill('hunter_shot', data.targetId, {});
+      }
+    });
+
+    // Witch revive available
+    this.socket.on('witch-revive-available', () => {
+      if (confirm('是否使用女巫解药？（满血复活）')) {
+        this.socket.useSkill('witch_revive', this.game.state.playerId, {});
+      }
+    });
+
     // Error
     this.socket.on('error', (data) => {
       this.renderer.showNotification(data.message || '发生错误');
     });
+  }
+
+  // --- Skill selection ---
+  showSkillSelection() {
+    const hand = this.game.state.hand;
+    const fieldCard = this.game.state.fieldCard;
+
+    // Available skills based on hand and field
+    const availableSkills = [];
+
+    // Check for guard shield (instant from hand)
+    const guardInHand = hand.find(c => c.id === 'guard');
+    if (guardInHand) {
+      availableSkills.push({
+        name: '守卫 - 瞬发套盾',
+        skill: 'guard_shield',
+        isInstant: true,
+        targetSelf: true
+      });
+    }
+
+    // Check for guard shield (from field)
+    if (fieldCard && fieldCard.id === 'guard') {
+      availableSkills.push({
+        name: '守卫 - 场上套盾',
+        skill: 'guard_shield',
+        isInstant: false,
+        targetSelf: true
+      });
+    }
+
+    // Check for witch poison (from field)
+    if (fieldCard && fieldCard.id === 'witch') {
+      availableSkills.push({
+        name: '女巫 - 毒药 (10点伤害)',
+        skill: 'witch_poison',
+        targetOpponent: true
+      });
+    }
+
+    // Check for seer vision (from hand)
+    const seerInHand = hand.find(c => c.id === 'seer');
+    if (seerInHand) {
+      availableSkills.push({
+        name: '预言家 - 天眼 (查看对手手牌)',
+        skill: 'seer_vision',
+        targetOpponent: true
+      });
+    }
+
+    if (availableSkills.length === 0) {
+      this.renderer.showNotification('没有可用的技能');
+      return;
+    }
+
+    // Create skill selection popup
+    this.showSkillPopup(availableSkills);
+  }
+
+  showSkillPopup(skills) {
+    // Remove existing popup if any
+    const existing = document.getElementById('skill-popup');
+    if (existing) existing.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'skill-popup';
+    popup.className = 'skill-popup';
+    popup.innerHTML = `
+      <div class="skill-popup-content">
+        <h3>选择技能</h3>
+        <div class="skill-list"></div>
+        <button class="menu-btn secondary skill-cancel-btn">取消</button>
+      </div>
+    `;
+
+    const skillList = popup.querySelector('.skill-list');
+    skills.forEach(skill => {
+      const btn = document.createElement('button');
+      btn.className = 'menu-btn skill-btn';
+      btn.textContent = skill.name;
+      btn.addEventListener('click', () => {
+        popup.remove();
+        this.executeSkill(skill);
+      });
+      skillList.appendChild(btn);
+    });
+
+    popup.querySelector('.skill-cancel-btn').addEventListener('click', () => {
+      popup.remove();
+    });
+
+    document.body.appendChild(popup);
+  }
+
+  executeSkill(skill) {
+    if (skill.skill === 'guard_shield') {
+      this.socket.useSkill('guard_shield', this.game.state.playerId, { isInstant: skill.isInstant });
+    } else if (skill.skill === 'witch_poison') {
+      this.socket.useSkill('witch_poison', this.game.state.opponentId, {});
+    } else if (skill.skill === 'seer_vision') {
+      // For seer vision, we need to show opponent's hand and let player choose
+      // For now, just use it and the server will return the hand info
+      this.socket.useSkill('seer_vision', this.game.state.opponentId, {});
+    }
   }
 
   // --- Room list rendering ---

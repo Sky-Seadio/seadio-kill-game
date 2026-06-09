@@ -280,6 +280,12 @@ class SocketHandler {
         // Handled in attack logic
         result = { success: true };
         break;
+      case 'witch_revive':
+        result = this.battleSystem.resolveWitchRevive(
+          roomId,
+          socket.id
+        );
+        break;
       default:
         result = { success: false, error: 'Unknown skill' };
     }
@@ -296,6 +302,12 @@ class SocketHandler {
       if (winResult) {
         this.io.to(roomId).emit('game-over', winResult);
         this.gameManager.removeGame(roomId);
+        return;
+      }
+
+      // End turn after using a skill (except seer_dodge which is passive)
+      if (data.skill !== 'seer_dodge') {
+        this.endTurn(roomId);
       }
     } else {
       socket.emit('error', { message: result.error });
