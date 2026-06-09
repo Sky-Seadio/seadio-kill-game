@@ -139,6 +139,12 @@ class SocketHandler {
     if (result.success) {
       socket.emit('card-placed', { card: result.card });
 
+      // Notify opponent that a card was placed (face-down)
+      const opponentId = Object.keys(this.gameManager.getGame(roomId).players).find(id => id !== socket.id);
+      if (opponentId) {
+        this.io.to(opponentId).emit('opponent-placed-card');
+      }
+
       // Check if both players placed
       const game = this.gameManager.getGame(roomId);
       const players = Object.values(game.players);
