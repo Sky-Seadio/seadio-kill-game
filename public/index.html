@@ -1,11 +1,161 @@
+<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seadio Kill</title>
+  <title>Seadio Kill - 狼人杀卡牌对战</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>Seadio Kill - Coming Soon</h1>
+  <!-- Main Menu -->
+  <div id="main-menu" class="screen active">
+    <div class="menu-container">
+      <h1 class="game-title">SEADIO KILL</h1>
+      <p class="game-subtitle">狼人杀卡牌对战</p>
+
+      <div class="menu-buttons">
+        <button id="btn-quick-match" class="menu-btn">快速匹配</button>
+        <button id="btn-create-room" class="menu-btn">创建房间</button>
+        <button id="btn-join-room" class="menu-btn">加入房间</button>
+        <button id="btn-room-list" class="menu-btn">房间列表</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Room Modal -->
+  <div id="create-room-modal" class="modal">
+    <div class="modal-content">
+      <h2>创建房间</h2>
+      <div class="form-group">
+        <label for="room-password">房间密码（可选）</label>
+        <input type="password" id="room-password" placeholder="留空则无密码">
+      </div>
+      <div class="modal-buttons">
+        <button id="btn-confirm-create" class="menu-btn">创建</button>
+        <button id="btn-cancel-create" class="menu-btn secondary">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Join Room Modal -->
+  <div id="join-room-modal" class="modal">
+    <div class="modal-content">
+      <h2>加入房间</h2>
+      <div class="form-group">
+        <label for="join-room-id">房间号</label>
+        <input type="text" id="join-room-id" placeholder="输入6位房间号">
+      </div>
+      <div class="form-group">
+        <label for="join-room-password">房间密码</label>
+        <input type="password" id="join-room-password" placeholder="如有密码请填写">
+      </div>
+      <div class="modal-buttons">
+        <button id="btn-confirm-join" class="menu-btn">加入</button>
+        <button id="btn-cancel-join" class="menu-btn secondary">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room List Modal -->
+  <div id="room-list-modal" class="modal">
+    <div class="modal-content">
+      <h2>房间列表</h2>
+      <div id="room-list-container" class="room-list">
+        <p class="no-rooms">暂无可用房间</p>
+      </div>
+      <div class="modal-buttons">
+        <button id="btn-refresh-rooms" class="menu-btn">刷新</button>
+        <button id="btn-close-room-list" class="menu-btn secondary">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Waiting Screen -->
+  <div id="waiting-screen" class="screen">
+    <div class="waiting-container">
+      <div class="loading-spinner"></div>
+      <h2>等待对手加入...</h2>
+      <p id="waiting-room-id" class="room-id-display"></p>
+      <button id="btn-cancel-waiting" class="menu-btn secondary">取消</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="screen">
+    <div class="game-container">
+      <!-- Opponent Area -->
+      <div class="opponent-area">
+        <div class="player-info">
+          <span class="player-name">对手</span>
+          <span class="card-count" id="opponent-card-count">6</span>
+        </div>
+        <div class="opponent-hand" id="opponent-hand">
+          <!-- Opponent cards (hidden) -->
+        </div>
+        <div class="opponent-field" id="opponent-field">
+          <!-- Opponent's field card -->
+        </div>
+      </div>
+
+      <!-- Battle Area -->
+      <div class="battle-area">
+        <div class="turn-indicator" id="turn-indicator">
+          <!-- Turn phase display -->
+        </div>
+        <div class="rps-area" id="rps-area" style="display: none;">
+          <h3>猜拳</h3>
+          <div class="rps-buttons">
+            <button class="rps-btn" data-choice="rock">✊ 石头</button>
+            <button class="rps-btn" data-choice="scissors">✌️ 剪刀</button>
+            <button class="rps-btn" data-choice="paper">🖐️ 布</button>
+          </div>
+        </div>
+        <div class="action-area" id="action-area" style="display: none;">
+          <h3>选择操作</h3>
+          <div class="action-buttons">
+            <button id="btn-attack" class="action-btn">⚔️ 攻击</button>
+            <button id="btn-use-card" class="action-btn">🃏 使用卡牌</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Area -->
+      <div class="player-area">
+        <div class="player-field" id="player-field">
+          <!-- Player's field card -->
+        </div>
+        <div class="player-hand" id="player-hand">
+          <!-- Player's hand cards -->
+        </div>
+        <div class="player-info">
+          <span class="player-name">你</span>
+          <span class="card-count" id="player-card-count">6</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+      <div class="modal-content">
+        <h2 id="game-result">游戏结束</h2>
+        <p id="game-result-detail"></p>
+        <button id="btn-back-to-menu" class="menu-btn">返回主菜单</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div id="notification" class="notification">
+    <p id="notification-text"></p>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/network/SocketClient.js"></script>
+  <script src="js/game/GameClient.js"></script>
+  <script src="js/game/Renderer.js"></script>
+  <script src="js/game/UI.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
